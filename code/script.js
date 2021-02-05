@@ -6,53 +6,50 @@ const input = document.getElementById('user-input')
 let questionNumber = 0;
 let bookingSentence = "";
 
-
-const nxtQuestion = (answer) => {
-  onInput(answer)
-  if (ifEqual(questionNumber, 1)) {
-    setTimeout(() => {
-      persons(answer)
-    }, 1000)
-    input.value = ""
-  } else if (ifEqual(questionNumber, 2)) {
-    setTimeout(() => {
-      where(answer)
-    }, 1000)
-    input.value = ""
-  } else if (ifEqual(questionNumber, 3)) {
-    setTimeout(() => {
-      place(answer)
-    }, 1000)
-    input.value = ""
-  } else if (ifEqual(questionNumber, 4)) {
-    setTimeout(() => {
-      interest(answer)
-    }, 1000)
-    input.value = ""
-  } else if (ifEqual(questionNumber, 5)) {
-    setTimeout(() => {
-      booking(answer)
-    }, 1000)
-    input.value = ""
-  } else if (ifEqual(questionNumber, 6)) {
-    setTimeout(() => {
-      confirmation(answer)
-    }, 1000)
-  } else {
-    setTimeout(fail, 1000)
-    input.value = ""
+const nxtQuestion = (response) => {
+  handleResponse(response)
+  switch (questionNumber) {
+    case 1:
+      setTimeout(() => {
+        persons(response)
+      }, 1000)
+      input.value = ""
+      break;
+    case 2:
+      setTimeout(() => {
+        where(response)
+      }, 1000)
+      input.value = ""
+      break;
+    case 3:
+      setTimeout(() => {
+        place(response)
+      }, 1000)
+      input.value = ""
+      break;
+    case 4:
+      setTimeout(() => {
+        interest(response)
+      }, 1000)
+      input.value = ""
+      break;
+    case 5:
+      setTimeout(() => {
+        booking(response)
+      }, 1000)
+      input.value = ""
+      break;
+    case 6:
+      setTimeout(() => {
+        confirmation(response)
+      }, 1000)
+      break;
   }
-}
-
-const ifEqual = (qNumber, number) => {
-  return qNumber === number;
 }
 
 // This function will add a chat bubble in the correct place based on who the sender is
 const showMessage = (message, sender) => {
   if (sender === 'user') {
-
-    console.log();
     chat.innerHTML += `
       <section class="user-msg">
         <div class="bubble user-bubble">
@@ -61,7 +58,6 @@ const showMessage = (message, sender) => {
       </section>
     `
   } else if (sender === 'bot') {
-    console.log();
     chat.innerHTML += `
       <section class="bot-msg">
         <img src="./assets/chatbot.png" alt="Bot" />
@@ -69,24 +65,25 @@ const showMessage = (message, sender) => {
           <p>${message}</p>
         </div>
       </section>
-    `
+   `
   }
 
   // This little thing makes the chat scroll to the last message when there are too many to be shown in the chat box
   chat.scrollTop = chat.scrollHeight
 }
 
-//
-const onInput = (answer) => {
-  showMessage(answer, 'user');
+//input from user
+const handleResponse = (response) => {
+  showMessage(response, 'user');
 }
 
 // Bot chat messages
 // .0
-const nights = () => {
+const nights = (fName) => {
   questionNumber = 1;
-  showMessage(`Hi, how many nights do you want to book?`, 'bot');
+  showMessage(`Hi ${fName}, how many nights do you want to book?`, 'bot');
 }
+
 // .1
 const persons = (nights) => {
   if (Number(nights) > 0 && Number(nights) <= 28) {
@@ -106,14 +103,17 @@ const where = (persons) => {
     showMessage(`What settings are you looking for?`, 'bot');
 
     inputWrapper.innerHTML = `
-    <div class="where-btn-wrapper">
-      <div class="where-btn" id="mountain">
-        <img src="./assets/mountains.png" alt="mountains"></div>
-      <div class="where-btn" id="beach">
-        <img src="./assets/beach.png" alt="beach"></div>
-      <div class="where-btn" id="city">
-        <img src="./assets/city.png" alt="city"></div>
-    </div>
+      <div class="where-btn-wrapper">
+        <div class="where-btn" id="mountain">
+          <img src="./assets/mountains.png" alt="mountains">
+        </div>
+        <div class="where-btn" id="beach">
+          <img src="./assets/beach.png" alt="beach">
+        </div>
+        <div class="where-btn" id="city">
+          <img src="./assets/city.png" alt="city">
+        </div>      
+      </div>
     `
     const mountain = document.getElementById('mountain')
     const beach = document.getElementById('beach')
@@ -134,31 +134,31 @@ const where = (persons) => {
 }
 
 // .3 after choosing mountain/beach/city - a list to select 
-const place = (plc) => {
+const place = (place) => {
   questionNumber++
   showMessage(`Where do you want to go?`, 'bot');
-  if (plc === 'mountain') {
+  if (place === 'mountain') {
     inputWrapper.innerHTML = `
       <select class="select-mountain" id="select">
-        <option>Choose a destination</option>
+        <option selected disabled>Choose a destination</option>
         <option value="Schweiz">Schweiz</option>
         <option value="Chile">Chile</option>
         <option value="Tibet">Tibet</option>
       </select>
     `
-  } else if (plc === 'beach') {
+  } else if (place === 'beach') {
     inputWrapper.innerHTML = `
       <select class="select-beach" id="select">
-        <option>Choose a destination</option>
+        <option selected disabled>Choose a destination</option>
         <option value="Miami">Miami</option>
         <option value="Bali">Bali</option>
         <option value="Las Palmas">Las Palmas</option>
       </select>
     `
-  } else if (plc === 'city') {
+  } else if (place === 'city') {
     inputWrapper.innerHTML = `
       <select class="select-city" id="select">
-        <option>Choose a destination</option>
+        <option selected disabled>Choose a destination</option>
         <option value="New York">New York</option>
         <option value="Barcelona">Barcelona</option>
         <option value="Tokyo">Tokyo</option>
@@ -170,66 +170,73 @@ const place = (plc) => {
 }
 
 
-// .4 
-const interest = (plc) => {
+// .4 checkboxes where you can choose interests
+const interest = (place) => {
+  bookingSentence += ` to ${place}.`
   questionNumber++
-  bookingSentence += ` to ${plc} for you.`
   showMessage(`What do you want to do during your vacation?`, 'bot');
-  if (plc === 'New York' || plc === 'Barcelona' || plc === 'Tokyo') {
+  if (place === 'New York' || place === 'Barcelona' || place === 'Tokyo') {
     inputWrapper.innerHTML = `
       <form id="interest-form">
-        <label for="culture" class="container">Culture
-        <input class="checkbox" type="checkbox"  id="culture" name="culture">
-        <span class="checkmark"></span>
-        </label>
-        <label for="food" class="container">Food
-        <input class="checkbox" type="checkbox"  id="food" name="food">
-        <span class="checkmark"></span>
-        </label>
-        <label for="shopping" class="container">Shopping
-        <input class="checkbox" type="checkbox"  id="shopping" name="shopping">
-        <span class="checkmark"></span>
-        </label>
+        <div class="interest-wrapper">
+          <label for="culture" class="interest-container">Culture
+            <input class="checkbox" type="checkbox"  id="culture" name="culture" value="culture">
+            <span class="checkmark"></span>
+          </label>
+          <label for="food" class="interest-container">Food
+            <input class="checkbox" type="checkbox"  id="food" name="food" value="food">
+            <span class="checkmark"></span>
+          </label>
+          <label for="shopping" class="interest-container">Shopping
+            <input class="checkbox" type="checkbox"  id="shopping" name="shopping" value="shopping">
+            <span class="checkmark"></span>
+          </label>
+        <div>
         <button type="submit" class="interest-btn">Choose</button>
       </form>
     `
-  } else if (plc === 'Miami' || plc === 'Las Palmas' || plc === 'Bali') {
+  } else if (place === 'Miami' || place === 'Las Palmas' || place === 'Bali') {
     inputWrapper.innerHTML = `
       <form id="interest-form">
-        <label for="water-sports" class="container">Water sports
-        <input class="checkbox" type="checkbox"  id="water-sports" name="water sports">
-        <span class="checkmark"></span>
-        </label>
-        <label for="relax" class="container">Relax in the sun
-        <input class="checkbox" type="checkbox"  id="relax" name="relaxing">
-        <span class="checkmark"></span>
-        </label>
-        <label for="party" class="container">Beachparty
-        <input class="checkbox" type="checkbox"  id="party" name="beach parties">
-        <span class="checkmark"></span>
-        <button type="submit" class="interest-btn">Choose</button>
-        </label>
+        <div class="interest-wrapper">
+          <label for="wsports" class="interest-container">Water sports
+            <input class="checkbox" type="checkbox"  id="wsports" name="wports" value="water sports">
+            <span class="checkmark"></span>
+          </label>
+          <label for="relax" class="interest-container">Relax in the sun
+            <input class="checkbox" type="checkbox"  id="relax" name="relax" value="relaxing">
+            <span class="checkmark"></span>
+          </label>
+          <label for="party" class="interest-container">Beachparty
+            <input class="checkbox" type="checkbox"  id="party" name="party" value="beach parties">
+            <span class="checkmark"></span>
+          </label>
+          <button type="submit" class="interest-btn">Choose</button>
+        <div>
       </form>
     `
   } else {
     inputWrapper.innerHTML = `
-    <form id="interest-form">
-      <label for="extreme" class="container">Extreme sports
-      <input class="checkbox" type="checkbox"  id="extreme" name="extreme sports">
-      <span class="checkmark"></span>
-      </label>
-      <label for="hiking" class="container">Hiking
-      <input class="checkbox" type="checkbox"  id="hiking" name="hiking">
-      <span class="checkmark"></span>
-      </label>
-      <label for="spiritual" class="container">Spiritual journey
-      <input class="checkbox" type="checkbox"  id="spiritual" name="spiritual pursuits">
-      <span class="checkmark"></span>
-      </label>
-      <button type="submit" class="interest-btn">Choose</button>
-    </form>
-      `
+      <form id="interest-form">
+        <div class="interest-wrapper">
+          <label for="extreme" class="interest-container">Extreme sports
+            <input class="checkbox" type="checkbox" id="extreme" name="extreme" value="extreme sports">
+            <span class="checkmark"></span>
+          </label>
+          <label for="hiking" class="interest-container">Hiking
+            <input class="checkbox" type="checkbox"  id="hiking" name="hiking" value="hiking">
+            <span class="checkmark"></span>
+          </label>
+          <label for="spiritual" class="interest-container">Spiritual journey
+            <input class="checkbox" type="checkbox"  id="spiritual" name="spiritual" value="spiritual pursuits">
+            <span class="checkmark"></span>
+          </label>
+        <div>
+        <button type="submit" class="interest-btn">Choose</button>
+      </form>
+    `
   }
+
   const interestForm = document.getElementById("interest-form")
   interestForm.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -237,9 +244,9 @@ const interest = (plc) => {
     let interestString;
     for (let i = 0; i < checked.length; i++) {
       if (i === 0) {
-        interestString = `${checked[i].name}`
+        interestString = `${checked[i].value}`
       } else {
-        interestString += `/${checked[i].name}`
+        interestString += `/${checked[i].value}`
       }
     }
     nxtQuestion(interestString)
@@ -247,55 +254,69 @@ const interest = (plc) => {
   })
 }
 
-// .5
-
+// .5 
 const booking = (interest) => {
   questionNumber++
-  bookingSentence += ` Enjoy a wonderful time with lots of ${interest}! Au revoir!`
+  bookingSentence += ` Enjoy a wonderful time with lots of ${interest}! Info will be sent to <div class="email">${sessionStorage.getItem("email")}</div>. Au revoir!`
   showMessage(`Do you want to book this?`, 'bot')
-  inputWrapper.innerHTML = `<form id="name-form">
-  <input id="user-input" type="text" />
-  <button id="send-btn" class="send-btn" type="submit">
-    Send
-  </button>
-</form>`
+  textInput()
+}
 
-  const bookForm = document.getElementById("name-form")
-  const userForm = document.getElementById("user-input")
-  bookForm.addEventListener('submit', (event) => {
+const textInput = () => {
+  inputWrapper.innerHTML = `
+    <form id="name-form">
+      <input id="user-input" type="text" />
+      <button id="send-btn" class="send-btn" type="submit">
+        Send
+      </button>
+    </form>`
+
+  const bookingForm = document.getElementById("name-form")
+  const handleBooking = document.getElementById("user-input")
+  bookingForm.addEventListener('submit', (event) => {
     event.preventDefault()
-    nxtQuestion(userForm.value)
-    userForm.value=""
+    nxtQuestion(handleBooking.value)
+    handleBooking.value = ""
   })
 }
 
-// .6
-
+// .6 Asks if user wants to book and if yes writes out a sentence with information about the trip
 const confirmation = (answer) => {
   if (answer.toLowerCase() === 'yes') {
     showMessage(bookingSentence, "bot")
+    setTimeout(() => {
+      window.open("./index.html")
+    }, 8000)
   } else if (answer.toLowerCase() === 'no') {
     showMessage(`Thanks for your time and hope we'll meet again soon!`, 'bot')
+    setTimeout(() => {
+      window.open("./index.html")
+    }, 3000)
   } else {
-    showMessage(`Please answer yes or no.`, 'bot')
+    showMessage(`Please response yes or no.`, 'bot')
   }
 }
 
-// fail
-const fail = () => {
-  showMessage(`Try input again`, 'bot');
+// if the button has the id "start-btn" (index site) then open the chatbot on submit and stores the name/email from the index page form
+if (document.getElementById("start-btn")) {
+  const startForm = document.getElementById("start-form")
+  const fName = document.getElementById("fname")
+  const eMail = document.getElementById("email")
+  startForm.addEventListener('submit', (event) => {
+    sessionStorage.setItem("name", fName.value);
+    sessionStorage.setItem("email", eMail.value);
+    event.preventDefault()
+    window.open("./chatbot.html")
+  })
 }
 
-// Action when submitting form
+//eventlistener for when the submit in the chatbot  clicked
 form.addEventListener('submit', (event) => {
   event.preventDefault()
   nxtQuestion(input.value)
 })
 
-const startForm=document.getElementById("start-form")
-startForm.addEventListener('submit', (event) => {
-  event.preventDefault()
-})
-
-// This means the nights function will be called one second after the website is loaded.
-setTimeout(nights, 1500)
+// This means the nights function will be called one second after the website is loaded 
+setTimeout(() => {
+  nights(sessionStorage.getItem("name"))
+}, 1500)
