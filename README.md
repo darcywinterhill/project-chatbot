@@ -1,4 +1,4 @@
-# Project Name
+# Travel Chatbot
 
 Our project was to pair program a chatbot, with the focus of learning the basics of Javascript.
 
@@ -24,4 +24,4 @@ If we had more time we might have added media queries and also put some more thi
 
 ## View it live
 
-Have you deployed your project somewhere? Be sure to include the link to the deployed project so that the viewer can click around and see what it's all about.
+https://travel-chatbot.netlify.app/
