@@ -1,3 +1,5 @@
+Project week 4 of Technigo bootcamp
+
 # Travel Chatbot
 
 Our project was to pair program a chatbot, with the focus of learning the basics of Javascript.
